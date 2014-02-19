@@ -23,6 +23,85 @@ namespace ShowsCountDown
         public MainWindow()
         {
             InitializeComponent();
+
+            setupHeaders();
+
+            testData();
         }
+
+        private void setupHeaders()
+        {
+            DataGridTextColumn c1 = new DataGridTextColumn();
+            c1.Header = "Show";
+            c1.Binding = new Binding("Show");
+            c1.Width = 110;
+            showGrid.Columns.Add(c1);
+            DataGridTextColumn c2 = new DataGridTextColumn();
+            c2.Header = "Last 24Hrs";
+            c2.Width = 110;
+            c2.Binding = new Binding("Last24Hours");
+            showGrid.Columns.Add(c2);
+            DataGridTextColumn c3 = new DataGridTextColumn();
+            c3.Header = "Next Airing";
+            c3.Width = 110;
+            c3.Binding = new Binding("NextAiring");
+            showGrid.Columns.Add(c3);
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        private void testData()
+        {
+            showGrid.Items.Add(new TestData("Bones", true, new DateTime()));
+
+        }
+
+        private void RemoveShowClick(object sender, RoutedEventArgs e)
+        {
+            if (showGrid.Items.Count > 0)
+                showGrid.Items.RemoveAt(0);
+        }
+
+        private void AddItemClick(object sender, RoutedEventArgs e)
+        {
+            testData();
+        }
+    }
+
+
+    public class TestData
+    {
+        private string _show;
+        private bool _last24Hours;
+        private DateTime _nextAiring;
+
+        public TestData (string show, bool last24Hours, DateTime nextAiring)
+        {
+            _show = show;
+            _last24Hours = last24Hours;
+            _nextAiring = nextAiring;
+        }
+
+        public string Show
+        {
+            get { return _show;  }
+            set { _show = value; }
+        }
+
+        public bool Last24Hours
+        {
+            get { return _last24Hours; }
+            set { _last24Hours = value; }
+        }
+
+        public DateTime NextAiring
+        {
+            get { return _nextAiring; }
+            set { _nextAiring = value; }
+        }
+
     }
 }

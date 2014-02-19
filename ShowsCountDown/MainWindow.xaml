@@ -1,8 +1,15 @@
 ﻿<Window x:Class="ShowsCountDown.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Show releases" Height="350" Width="525">
     <Grid>
-        
+        <Viewbox HorizontalAlignment="Left" Margin="10,286,0,0" VerticalAlignment="Top" Width="63" Height="23" Stretch="Fill">
+            <Button x:Name="CloseButton" Content="Close" RenderTransformOrigin="-0.227,0.478" Height="24" Width="63" Click="CloseButton_Click"/>
+        </Viewbox>
+        <Button x:Name="AddShowButton" Content="Add Show" HorizontalAlignment="Left" Margin="10,238,0,0" VerticalAlignment="Top" Width="63" Height="32" Click="AddItemClick"/>
+        <Button x:Name="RemoveShowButton" Content="Remove&#xD;&#xA; Show" HorizontalAlignment="Left" Margin="10,197,0,0" VerticalAlignment="Top" Width="63" Click="RemoveShowClick"/>
+        <DataGrid x:Name="showGrid" Margin="78,10,0,0" VerticalAlignment="Top" Height="299" Width="429" HeadersVisibility="Column" GridLinesVisibility="Horizontal" ColumnWidth="Auto" IsReadOnly="True" HorizontalScrollBarVisibility="Disabled" FrozenColumnCount="3" AutoGenerateColumns="False"/>
+        <DataGrid HorizontalAlignment="Left" Margin="-115,67,0,0" VerticalAlignment="Top"/>
+
     </Grid>
 </Window>
