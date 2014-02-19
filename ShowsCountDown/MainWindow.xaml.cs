@@ -20,9 +20,15 @@ namespace ShowsCountDown
     /// </summary>
     public partial class MainWindow : Window
     {
+        bool inDrag = false;
+        Point anchorPoint;
+
         public MainWindow()
         {
             InitializeComponent();
+            this.ShowInTaskbar = false;
+            this.
+            showWindow.Title = "";
 
             setupHeaders();
 
@@ -68,6 +74,40 @@ namespace ShowsCountDown
         private void AddItemClick(object sender, RoutedEventArgs e)
         {
             testData();
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            anchorPoint = PointToScreen(e.GetPosition(this));
+            inDrag = true;
+            CaptureMouse();
+            e.Handled = true;
+        }
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (inDrag)
+            {
+                Point currentPoint = PointToScreen(e.GetPosition(this));
+                this.Left = this.Left + currentPoint.X - anchorPoint.X;
+                this.Top = this.Top + currentPoint.Y - anchorPoint.Y;
+                anchorPoint = currentPoint;
+            }
+        }
+
+        private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (inDrag)
+            {
+                ReleaseMouseCapture();
+                inDrag = false;
+                e.Handled = true;
+            }
+        }
+
+        private void showWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
     }
 
