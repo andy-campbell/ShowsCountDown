@@ -25,14 +25,17 @@ namespace ShowsCountDown
 
         public MainWindow()
         {
-            InitializeComponent();
-            this.ShowInTaskbar = false;
-            this.
-            showWindow.Title = "";
+            //InitializeComponent();
+            //this.ShowInTaskbar = false;
+            //showWindow.Title = "";
 
-            setupHeaders();
+            //setupHeaders();
 
-            testData();
+            //testData();
+
+            //new ShowsDB();
+            //new AllShows();
+            new Search("test");
         }
 
         private void setupHeaders()
