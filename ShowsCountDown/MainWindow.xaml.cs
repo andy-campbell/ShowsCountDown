@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Timers;
 
 namespace ShowsCountDown
 {
@@ -36,6 +37,28 @@ namespace ShowsCountDown
             setupHeaders();
             fromBin();
             populateGrid();
+
+            setupUpdateTimer();
+
+        }
+
+        private void runUpdate(object source, ElapsedEventArgs e)
+        {
+            foreach (var show in showsDB)
+            {
+                if (show.NextAiring.AddHours(-24) >= DateTime.Now)
+                {
+                    Search updateSearch = new Search(show.Show);
+                    show.NextAiring = updateSearch.nextShowingDateTime();
+                    show.Last24Hours = updateSearch.last24Hours();
+                }
+            }
+        }
+
+        private void setupUpdateTimer()
+        {
+            Timer updateTimer = new System.Timers.Timer(3600000);
+            updateTimer.Elapsed += new ElapsedEventHandler(runUpdate);
 
         }
 
@@ -87,14 +110,21 @@ namespace ShowsCountDown
 
             string showToAdd = form.getSelectedShow();
 
-            Search show = new Search(showToAdd);
-            ShowData newItem = new ShowData(showToAdd, show.last24Hours(), show.nextShowingDateTime());
+            Search searchForShow = new Search(showToAdd);
+            var foundShow = showsDB.Find(show => show.Show == showToAdd);
+
+            if (foundShow != null)
+            {
+                form.Close();
+                return;
+            }
+
+            ShowData newItem = new ShowData(showToAdd, searchForShow.last24Hours(), searchForShow.nextShowingDateTime());
             showGrid.Items.Add(newItem);
             showsDB.Add(newItem);
 
             toBin();
 
-            form.Close();
         }
 
         private void AddItemClick(object sender, RoutedEventArgs e)
