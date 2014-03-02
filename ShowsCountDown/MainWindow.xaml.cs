@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ShowsCountDown
 {
@@ -22,16 +25,16 @@ namespace ShowsCountDown
     {
         bool inDrag = false;
         Point anchorPoint;
-        ShowsDB showsDB;
+        List<ShowData> showsDB;
         public MainWindow()
         {
             InitializeComponent();
+            showsDB = new List<ShowData>();
             this.ShowInTaskbar = false;
             showWindow.Title = "";
 
             setupHeaders();
-            showsDB = new ShowsDB();
-
+            fromBin();
             populateGrid();
 
         }
@@ -62,9 +65,10 @@ namespace ShowsCountDown
 
         private void populateGrid()
         {
-            List<ShowData> dbEntries = showsDB.getShowsSaves();
+            if (showsDB == null)
+                return;
 
-            foreach (var showData in dbEntries)
+            foreach (var showData in showsDB)
             {
                 showGrid.Items.Add(showData);
             }
@@ -84,9 +88,11 @@ namespace ShowsCountDown
             string showToAdd = form.getSelectedShow();
 
             Search show = new Search(showToAdd);
+            ShowData newItem = new ShowData(showToAdd, show.last24Hours(), show.nextShowingDateTime());
+            showGrid.Items.Add(newItem);
+            showsDB.Add(newItem);
 
-            showGrid.Items.Add(new ShowData(showToAdd, show.last24Hours(), show.nextShowingDateTime()));
-            showsDB.AddNewTrackedShow(showToAdd, show.last24Hours(), show.nextShowingDateTime());
+            toBin();
 
             form.Close();
         }
@@ -132,14 +138,55 @@ namespace ShowsCountDown
         {
             DragMove();
         }
+
+        private void toBin()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<ShowData>));
+            TextWriter textWriter = new StreamWriter("XMLSerilazermovie.xml");
+            serializer.Serialize(textWriter, showsDB);
+            textWriter.Close();
+
+
+            try
+            {
+                using (Stream stream = File.Open("shows.bin", FileMode.Create))
+                {
+                    BinaryFormatter bin = new BinaryFormatter();
+                    bin.Serialize(stream, showsDB);
+                }
+            }
+            catch (IOException)
+            {
+            }
+        }
+
+        private void fromBin()
+        {
+            try
+            {
+                using (Stream stream = File.Open("shows.bin", FileMode.Open))
+                {
+                    BinaryFormatter binFormater = new BinaryFormatter();
+                    showsDB = (List<ShowData>)binFormater.Deserialize(stream);
+                }
+            }
+            catch(System.IO.FileNotFoundException)
+            {
+            }
+        }
     }
 
-
+    [Serializable()]
     public class ShowData
     {
         private string _show;
         private bool _last24Hours;
         private DateTime _nextAiring;
+
+        public ShowData()
+        {
+
+        }
 
         public ShowData (string show, bool last24Hours, DateTime nextAiring)
         {

@@ -43,8 +43,7 @@ namespace ShowsCountDown
                 
                 count++;
                 if (count == 3)
-                    count = 0;
-                
+                    count = 0;  
             }
         }
 
