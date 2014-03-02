@@ -61,7 +61,7 @@ namespace ShowsCountDown
             foreach (var s in matches)
             {
                 if (count == 0)
-                    showsList.Add(s.ToString());
+                    showsList.Add(s.ToString().Replace("\"", ""));
                 
                 count++;
                 if (count == 3)

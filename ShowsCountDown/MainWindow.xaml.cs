@@ -22,20 +22,18 @@ namespace ShowsCountDown
     {
         bool inDrag = false;
         Point anchorPoint;
-
+        ShowsDB showsDB;
         public MainWindow()
         {
-            //InitializeComponent();
-            //this.ShowInTaskbar = false;
-            //showWindow.Title = "";
+            InitializeComponent();
+            this.ShowInTaskbar = false;
+            showWindow.Title = "";
 
-            //setupHeaders();
+            setupHeaders();
+            showsDB = new ShowsDB();
 
-            //testData();
+            populateGrid();
 
-            //new ShowsDB();
-            //new AllShows();
-            new Search("test");
         }
 
         private void setupHeaders()
@@ -62,10 +60,14 @@ namespace ShowsCountDown
             Environment.Exit(0);
         }
 
-        private void testData()
+        private void populateGrid()
         {
-            showGrid.Items.Add(new TestData("Bones", true, new DateTime()));
+            List<ShowData> dbEntries = showsDB.getShowsSaves();
 
+            foreach (var showData in dbEntries)
+            {
+                showGrid.Items.Add(showData);
+            }
         }
 
         private void RemoveShowClick(object sender, RoutedEventArgs e)
@@ -74,9 +76,27 @@ namespace ShowsCountDown
                 showGrid.Items.RemoveAt(0);
         }
 
+
+        private void HandleAddShowFormButtonClicked(object sender)
+        {
+            AddShowForm form = (AddShowForm)sender;
+
+            string showToAdd = form.getSelectedShow();
+
+            Search show = new Search(showToAdd);
+
+            showGrid.Items.Add(new ShowData(showToAdd, show.last24Hours(), show.nextShowingDateTime()));
+            showsDB.AddNewTrackedShow(showToAdd, show.last24Hours(), show.nextShowingDateTime());
+
+            form.Close();
+        }
+
         private void AddItemClick(object sender, RoutedEventArgs e)
         {
-            testData();
+            AddShowForm addShowForm = new AddShowForm();
+            addShowForm.ThrowEvent += (_sender, args) => { HandleAddShowFormButtonClicked(_sender); };
+            addShowForm.Show();
+
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -115,13 +135,13 @@ namespace ShowsCountDown
     }
 
 
-    public class TestData
+    public class ShowData
     {
         private string _show;
         private bool _last24Hours;
         private DateTime _nextAiring;
 
-        public TestData (string show, bool last24Hours, DateTime nextAiring)
+        public ShowData (string show, bool last24Hours, DateTime nextAiring)
         {
             _show = show;
             _last24Hours = last24Hours;

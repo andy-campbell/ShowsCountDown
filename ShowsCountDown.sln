@@ -22,6 +22,7 @@ Global
 		{2A307208-2A1E-4BF2-A770-CD56CA2A923C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A307208-2A1E-4BF2-A770-CD56CA2A923C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A307208-2A1E-4BF2-A770-CD56CA2A923C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A307208-2A1E-4BF2-A770-CD56CA2A923C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
