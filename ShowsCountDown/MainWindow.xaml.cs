@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Timers;
@@ -27,15 +26,17 @@ namespace ShowsCountDown
         bool inDrag = false;
         Point anchorPoint;
         List<ShowData> showsDB;
+        Serilizer<List<ShowData>> serializer;
         public MainWindow()
         {
             InitializeComponent();
+            serializer = new Serilizer<List<ShowData>>("shows.bin");
             showsDB = new List<ShowData>();
             this.ShowInTaskbar = false;
             showWindow.Title = "";
 
             setupHeaders();
-            fromBin();
+            showsDB = serializer.getData(showsDB);
             populateGrid();
 
             setupUpdateTimer();
@@ -123,7 +124,8 @@ namespace ShowsCountDown
             showGrid.Items.Add(newItem);
             showsDB.Add(newItem);
 
-            toBin();
+            serializer.setData(showsDB);
+            form.Close();
 
         }
 
@@ -167,42 +169,6 @@ namespace ShowsCountDown
         private void showWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
-        }
-
-        private void toBin()
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(List<ShowData>));
-            TextWriter textWriter = new StreamWriter("XMLSerilazermovie.xml");
-            serializer.Serialize(textWriter, showsDB);
-            textWriter.Close();
-
-
-            try
-            {
-                using (Stream stream = File.Open("shows.bin", FileMode.Create))
-                {
-                    BinaryFormatter bin = new BinaryFormatter();
-                    bin.Serialize(stream, showsDB);
-                }
-            }
-            catch (IOException)
-            {
-            }
-        }
-
-        private void fromBin()
-        {
-            try
-            {
-                using (Stream stream = File.Open("shows.bin", FileMode.Open))
-                {
-                    BinaryFormatter binFormater = new BinaryFormatter();
-                    showsDB = (List<ShowData>)binFormater.Deserialize(stream);
-                }
-            }
-            catch(System.IO.FileNotFoundException)
-            {
-            }
         }
     }
 

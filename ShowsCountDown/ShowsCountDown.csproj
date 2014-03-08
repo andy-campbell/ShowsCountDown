@@ -67,6 +67,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AllShows.cs" />
+    <Compile Include="Serilizer.cs" />
     <Compile Include="WebScrape.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

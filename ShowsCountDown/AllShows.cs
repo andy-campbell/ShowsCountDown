@@ -16,10 +16,34 @@ namespace ShowsCountDown
     class AllShows
     {
         List<String> showsList;
+        Serilizer<List<String>> serilizer;
         public AllShows()
         {
+            serilizer = new Serilizer<List<string>>("AllShows.bin");
             showsList = new List<String>();
+
+
+            showsList = serilizer.getData(showsList);
+
+            if (showsList.Count == 0)
+            {
+                buildShowList();
+                serilizer.setData(showsList);
+            }
+                       
+        }
+
+        public void updateShowsList()
+        {
+            showsList.Clear();
+
             buildShowList();
+            serilizer.setData(showsList);
+        }
+
+        public List<String> getShowList()
+        {
+            return showsList;
         }
 
         private String getRawShowList()
@@ -47,9 +71,6 @@ namespace ShowsCountDown
             }
         }
 
-        public List<String> getShowList()
-        {
-            return showsList;
-        }
+
     }
 }
