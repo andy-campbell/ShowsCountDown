@@ -1,4 +1,13 @@
-﻿using System;
+﻿/**
+ * 
+ * For the lovely Cat! I hope you find the information given by this application to
+ * your liking. I love you
+ * 
+ * Andrew 
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +24,7 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Timers;
+using Microsoft.Win32;
 
 namespace ShowsCountDown
 {
@@ -40,6 +50,11 @@ namespace ShowsCountDown
             populateGrid();
 
             setupUpdateTimer();
+
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                key.SetValue("ShowsCountDown", "\"" + Directory.GetCurrentDirectory() + "\"");
+            }
 
         }
 
