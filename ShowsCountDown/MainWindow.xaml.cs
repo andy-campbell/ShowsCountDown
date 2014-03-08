@@ -47,10 +47,11 @@ namespace ShowsCountDown
         {
             foreach (var show in showsDB)
             {
-                if (show.NextAiring.AddHours(-24) >= DateTime.Now)
+                DateTime dt = DateTime.ParseExact(show.NextAiring, "dd MMMM yyyy HH:mm:ss", null);
+                if (dt.AddHours(-24) >= DateTime.Now)
                 {
                     Search updateSearch = new Search(show.Show);
-                    show.NextAiring = updateSearch.nextShowingDateTime();
+                    show.NextAiring = updateSearch.nextShowingDateTime().ToString();
                     show.Last24Hours = updateSearch.last24Hours();
                 }
             }
@@ -104,6 +105,14 @@ namespace ShowsCountDown
                 showGrid.Items.RemoveAt(0);
         }
 
+        private bool isValidShowTime(DateTime time)
+        {
+            if (time.Year == 0001)
+                return false;
+
+            return true;
+        }
+
 
         private void HandleAddShowFormButtonClicked(object sender)
         {
@@ -120,7 +129,11 @@ namespace ShowsCountDown
                 return;
             }
 
-            ShowData newItem = new ShowData(showToAdd, searchForShow.last24Hours(), searchForShow.nextShowingDateTime());
+            string nextShowingTime = searchForShow.nextShowingDateTime().ToString();
+            if (isValidShowTime(searchForShow.nextShowingDateTime()) == false)
+                nextShowingTime = "N/A";
+
+            ShowData newItem = new ShowData(showToAdd, searchForShow.last24Hours(), nextShowingTime);
             showGrid.Items.Add(newItem);
             showsDB.Add(newItem);
 
@@ -177,14 +190,14 @@ namespace ShowsCountDown
     {
         private string _show;
         private bool _last24Hours;
-        private DateTime _nextAiring;
+        private string _nextAiring;
 
         public ShowData()
         {
 
         }
 
-        public ShowData (string show, bool last24Hours, DateTime nextAiring)
+        public ShowData (string show, bool last24Hours, string nextAiring)
         {
             _show = show;
             _last24Hours = last24Hours;
@@ -203,7 +216,7 @@ namespace ShowsCountDown
             set { _last24Hours = value; }
         }
 
-        public DateTime NextAiring
+        public string NextAiring
         {
             get { return _nextAiring; }
             set { _nextAiring = value; }
